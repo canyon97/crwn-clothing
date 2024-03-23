@@ -3,6 +3,8 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
@@ -15,7 +17,9 @@ const firebaseConfig = {
   appId: "1:265341080202:web:0d78f4d81b15de2c77d373",
 };
 
+// TODO - implement usage of firebase app
 const firebaseApp = initializeApp(firebaseConfig);
+console.log(firebaseApp);
 
 // Provider is agnostic - we can use github, facebook, google etc
 const googleProvider = new GoogleAuthProvider();
@@ -28,9 +32,21 @@ export const auth = getAuth();
 export const signInWithGooglePopUp = () =>
   signInWithPopup(auth, googleProvider);
 
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  const authResponse = signInWithEmailAndPassword(auth, email, password);
+  return authResponse;
+};
+
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalFields = {}
+) => {
+  if (!userAuth) {
+    return;
+  }
+
   const userDocRef = doc(db, "users", userAuth.uid);
 
   const userSnapshot = await getDoc(userDocRef);
@@ -40,15 +56,26 @@ export const createUserDocumentFromAuth = async (userAuth) => {
     const createdAt = new Date();
 
     try {
+      // Firebase set values
       await setDoc(userDocRef, {
         displayName,
         email,
         createdAt,
+        ...additionalFields,
       });
     } catch (e) {
-      console.log(`error creating user:${e.message}`);
+      console.error(`error creating user:${e.message}`);
     }
   }
 
   return userDocRef;
+};
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (email && password) {
+    // Get user auth from firebase
+    return createUserWithEmailAndPassword(auth, email, password);
+  } else {
+    return;
+  }
 };
