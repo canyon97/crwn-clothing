@@ -7,7 +7,6 @@ import { useState } from "react";
 import {
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopUp,
-  createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
 
 const defaultFormFields = {
@@ -16,6 +15,7 @@ const defaultFormFields = {
 };
 
 const SignInForm = () => {
+  // Define state for form fields and extract fields
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
 
@@ -25,8 +25,7 @@ const SignInForm = () => {
 
   const signInWithGoogle = async () => {
     try {
-      const { user } = await signInWithGooglePopUp();
-      await createUserDocumentFromAuth(user);
+      await signInWithGooglePopUp();
     } catch (e) {
       // General error catcher - e.g. if user closes google sign in firebase will fire error
       console.error(e);
@@ -37,12 +36,11 @@ const SignInForm = () => {
     event.preventDefault();
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
-      // TODO - implement usage of authenticated user
-      console.log(response);
+
       resetFormFields();
     } catch (e) {
       // We want to include the break to ensure we don't try to match to other cases after reaching one successfully

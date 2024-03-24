@@ -5,6 +5,8 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
@@ -17,9 +19,8 @@ const firebaseConfig = {
   appId: "1:265341080202:web:0d78f4d81b15de2c77d373",
 };
 
-// TODO - implement usage of firebase app
-const firebaseApp = initializeApp(firebaseConfig);
-console.log(firebaseApp);
+
+initializeApp(firebaseConfig);
 
 // Provider is agnostic - we can use github, facebook, google etc
 const googleProvider = new GoogleAuthProvider();
@@ -31,11 +32,6 @@ googleProvider.setCustomParameters({
 export const auth = getAuth();
 export const signInWithGooglePopUp = () =>
   signInWithPopup(auth, googleProvider);
-
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
-  const authResponse = signInWithEmailAndPassword(auth, email, password);
-  return authResponse;
-};
 
 export const db = getFirestore();
 
@@ -79,3 +75,13 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
     return;
   }
 };
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  const authResponse = signInWithEmailAndPassword(auth, email, password);
+  return authResponse;
+};
+
+export const signOutUser = async () => signOut(auth);
+
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
