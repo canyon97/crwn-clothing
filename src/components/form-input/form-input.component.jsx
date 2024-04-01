@@ -1,16 +1,17 @@
-import "./form-input.styles.scss";
+import { FormLabelInput, Input, Group } from "./form-input.styles.jsx";
 
 // We explicitly define label, for value, required
 // etc we just pass additional props that are defined
 const FormInput = ({ label, ...otherProps }) => {
-  const labelClassName = `${
-    otherProps.value.length ? "shrink" : ""
-  } form-input-label`;
   return (
-    <div className="group">
-      <input className="form-input" {...otherProps} />
-      {label && <label className={labelClassName}>{label}</label>}
-    </div>
+    <Group>
+      <Input {...otherProps} />
+      {label && 
+      <FormLabelInput 
+        shrink={otherProps.value.length}
+      >{label}
+      </FormLabelInput>}
+    </Group>
   );
 };
 
