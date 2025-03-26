@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-
 
 const envParams = import.meta.env;
 
@@ -18,16 +22,30 @@ const firebaseConfig = {
 // Initialize Firebase
 initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider({
+// Provider is agnostic - we can use github, facebook, google etc
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
+// We want a singular auth
 export const auth = getAuth();
+export const signInWithGooglePopUp = () =>
+  signInWithPopup(auth, googleProvider);
+
+// Define auth methods
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalFields = {}
+) => {
+  if (!userAuth) {
+    return;
+  }
+
   const userDocRef = doc(db, "users", userAuth.uid);
   console.log(userDocRef);
 
@@ -36,16 +54,19 @@ export const createUserDocumentFromAuth = async (userAuth) => {
 
   // If user data does not exist, create a new user data
   if (!userExists) {
-    const userPayload = {
-      displayName: userAuth.displayName,
-      email: userAuth.email,
-      createdAt: new Date(),
-    };
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
 
     try {
-      await setDoc(userDocRef, userPayload);
+      // Firebase set values
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        ...additionalFields,
+      });
     } catch (e) {
-      console.error(e);
+      console.error(`error creating user:${e.message}`);
     }
   } else {
     console.log("User already exists");
@@ -53,4 +74,18 @@ export const createUserDocumentFromAuth = async (userAuth) => {
 
   // Return the user document reference
   return userDocRef;
+};
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (email && password) {
+    // Get user auth from firebase
+    return createUserWithEmailAndPassword(auth, email, password);
+  } else {
+    return;
+  }
+};
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  const authResponse = signInWithEmailAndPassword(auth, email, password);
+  return authResponse;
 };
