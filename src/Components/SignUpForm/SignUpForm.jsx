@@ -22,7 +22,6 @@ const SignUpForm = () => {
   const { displayName, email, password, confirmPassword } = formFields;
 
   const handleSubmit = async (event) => {
-    console.log("submitting");
     event.preventDefault();
 
     const resetFormFields = () => {
