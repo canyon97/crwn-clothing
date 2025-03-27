@@ -1,4 +1,4 @@
-import './SignUpForm.scss';
+import "./SignUpForm.scss";
 
 import { useState } from "react";
 
@@ -7,7 +7,7 @@ import {
   createUserDocumentFromAuth,
 } from "../../utils/firebase.utils";
 import FormInput from "../FormInput/FormInput";
-import Button from '../Button/Button';
+import Button from "../Button/Button";
 
 const defaultFormFields = {
   displayName: "",
@@ -21,12 +21,12 @@ const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const resetFormFields = () => {
-      setFormFields(defaultFormFields);
-    };
 
     // Check if passwords match
     if (password.length < 6) {
@@ -66,7 +66,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className = 'sign-up-container'>
+    <div className="sign-up-container">
       <h2>Don't have an account?</h2>
       <span>Sign up with your email and password</span>
       <form onSubmit={handleSubmit}>

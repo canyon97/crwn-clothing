@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import {
   signInWithGooglePopup,
-  createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
 } from "../../utils/firebase.utils";
 
@@ -13,9 +12,7 @@ import Button from "../Button/Button";
 
 const signInWithGoogle = async () => {
   try {
-    const { user } = await signInWithGooglePopup();
-    console.log(user);
-    await createUserDocumentFromAuth(user);
+    await signInWithGooglePopup();
   } catch (error) {
     console.error(error);
   }
@@ -39,11 +36,10 @@ const SignInForm = () => {
     };
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      const { user } = await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
-      console.log(response);
       resetFormFields();
     } catch (e) {
       if (e.code === "auth/invalid-credential") {
@@ -87,7 +83,11 @@ const SignInForm = () => {
         <div className="buttons-container">
           <Button type="submit">Sign In</Button>
           {/* We put the type to button to ensure form doesn't submit */}
-          <Button type="button" buttonType={"google"} onClick={signInWithGoogle}>
+          <Button
+            type="button"
+            buttonType={"google"}
+            onClick={signInWithGoogle}
+          >
             Google Sign In
           </Button>
         </div>

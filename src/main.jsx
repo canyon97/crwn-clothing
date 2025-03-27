@@ -1,15 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 
-import { BrowserRouter } from 'react-router-dom'
+import App from "./App.jsx";
+import { UserProvider } from "./contexts/User.jsx";
 
-import './index.scss'
-import App from './App.jsx'
+import "./index.scss";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+    {/* We wrap the App in the UserProvider to allow all children components access */}
+      <UserProvider>
+        <App />
+      </UserProvider>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </StrictMode>
+);
