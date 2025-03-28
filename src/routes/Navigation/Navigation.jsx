@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 import { Outlet, Link } from "react-router-dom";
 
-import { UserContext } from "../../contexts/User";
+import { UserContext } from "../../Contexts/User";
 
 import { signOutUser } from "../../utils/firebase.utils";
 
